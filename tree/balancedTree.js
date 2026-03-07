@@ -25,3 +25,21 @@ const isBalanced = (root) => {
 
     return getHeight(root) !== -1 ? true : false;
 };
+
+const isBalanced2 = (root) => {
+
+    const dfs = (node) => {
+        if (!node) return 0;
+
+        const leftHeight = dfs(node.left);
+        if (leftHeight === -1) return -1;
+        const rightHeight = dfs(node.right);
+        if (rightHeight === -1) return -1;
+
+        if (Math.abs(leftHeight - rightHeight) > 1) return -1;
+
+        return 1 + Math.max(leftHeight, rightHeight);
+    }
+
+    return dfs(root) === -1 ? false : true;
+};

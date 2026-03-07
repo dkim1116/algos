@@ -129,3 +129,40 @@ const numberOfIslands = (grid) => {
 
     return numberOfIslands;
 };
+
+const numOfIslands = (grid) => {
+    const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+
+    let islandCount = 0;
+    let xLength = grid.length;
+    let yLength = grid[0].length;
+
+    const dfs = (startX, startY) => {
+        if (startX < 0 || startX >= xLength || startY < 0 || startY >= yLength) return;
+
+        grid[startX][startY] = "0";
+
+        for (let [dirX, dirY] of dirs) {
+            const newX = startX + dirX;
+            const newY = startY + dirY;
+
+            if (newX < 0 || newX >= xLength) continue;
+            if (newy < 0 || newY >= yLength) continue;
+            
+            if (grid[newX][newY] === "1") {
+                dfs(newX, newY);
+            }
+        }
+    }
+
+    for (let x = 0; x < xLength; x++) {
+        for (let y = 0; y < yLength; y++) {
+            if (grid[x][y] === "1") {
+                dfs(x, y);
+                islandCount++;
+            }
+        }
+    }
+
+    return islandCount;
+}

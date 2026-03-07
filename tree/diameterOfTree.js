@@ -11,24 +11,24 @@ const getDiameter = (root) => {
 
         return 1 + Math.max(leftHeight, rightHeight);
     }
-
+    postOrderDFS(root);
     return best === -Infinity ? 0 : best;
 };
 
-const getDiameterOfTree = (root) => {
+const getDiameter2 = (root) => {
     let best = 0;
 
-    const postOrderDFS = (node) => {
+    const dfs = (node) => {
         if (!node) return 0;
 
-        const leftHeight = postOrderDFS(node.left);
-        const rightHeight = postOrderDFS(node.right);
+        const leftHeight = dfs(node.left);
+        const rightHeight = dfs(node.right);
 
         best = Math.max(best, leftHeight + rightHeight);
 
         return 1 + Math.max(leftHeight, rightHeight);
     }
 
-    postOrderDFS(root);
+    dfs(root);
     return best;
 }

@@ -64,6 +64,12 @@
 //     return true;
 // }
 
+const isValidBST = (node, min = -Infinity, max = Infinity) => {
+    if (!node) return true;
+    if (node.val <= min || node.val >= max) return false;
+
+    return isValidBST(node.left, min, node.val) && isValidBST(node.right, node.val, max);
+}
 
 const isBst = (node, min = -Infinity, max = Infinity) => {
     if (!node) return true;
@@ -71,6 +77,26 @@ const isBst = (node, min = -Infinity, max = Infinity) => {
 
     return isBst(node.left, min, node.val) && isBst(node.right, node.val, max);
 };
+
+const isBstInorderCheck = (root) => {
+    const stack = [];
+    let curr = root;
+    let prev;
+
+    while (curr || stack.length) {
+        while (curr) {
+            stack.push(curr);
+            curr = curr.left;
+        }
+
+        curr = stack.pop();
+        if (prev && curr.val < prev.val) return false;
+        prev = curr.val;
+        curr = curr.right;
+    }
+
+    return true;
+}
 
 const isBstInorder = (root) => {
     const stack = [];

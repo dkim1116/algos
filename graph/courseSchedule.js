@@ -48,3 +48,108 @@ const canFinish = (numCourses, prereqs) => {
     return true;
 }
 
+// prereq -> course
+const isValidCourses = (numCourses, prereqs) => {
+    const courseMap = new Map();
+
+    for (let i = 0; i < numCourses; i++) {
+        courseMap.set(i, []);
+    }
+
+    for ([course, prereq] of prereqs) {
+        courseMap.get(course).push(prereq);
+    }
+
+    const state = new Array(numCourses).fill(0);
+
+    const dfs = (course) => {
+        if (state[course] === 1) return false;
+        if (state[course] === 2) return true;
+
+        state[course] = 1;
+
+        for (let prereq of courseMap.get(course)) {
+            if (!dfs(prereq)) return false;
+        }
+
+        state[course] = 2;
+
+        return true;
+    }
+
+    for (let i = 0; i < numCourses; i++) {
+        if (!dfs(i)) return false;
+    }
+
+    return true;
+}
+
+// course -> prereq
+const isValidCourses2 = (numCourses, prereqs) => {
+    const courseMap = new Map();
+
+    for (let i = 0; i < numCourses; i++) {
+        courseMap.set(i, []);
+    }
+
+    for (let [course, prereq] of prereqs) {
+        courseMap.get(course).push(prereq);
+    }
+
+    const visiting = new Set();
+    const visited = new Set();
+
+    const dfs = (course) => {
+        if (visiting.has(course)) return false;
+        if (visited.has(course)) return true;
+
+        visiting.add(course);
+
+        for (let prereq of courseMap.get(course)) {
+            if (!dfs(prereq)) return false;
+        }
+
+        visiting.delete(course);
+        visited.add(course);
+
+        return true;
+    }
+
+    for (let i = 0; i < numCourses; i++) {
+        if (!dfs(i)) return false;
+    }
+
+    return true;
+}
+
+
+// Kahn's
+const canFinish = (numCourses, prerequisites) => {
+    const graph = Array.from({ length: numCourses }, () => []);
+    const inDegree = new Array(numCourses).fill(0);
+
+    for (let [course, prereq] of prerequisites) {
+        graph[prereq].push(course);
+        inDegree[course]++;
+    }
+
+    const queue = [];
+
+    for (let i = 0; i < numCourses; i++) {
+        if (inDegree[i] === 0) queue.push(i);
+    }
+
+    let completed = 0;
+
+    while (queue.length) {
+        const course = queue.shift();
+        completed++;
+
+        for (let next of graph[course]) {
+            inDegree[next]--;
+            if (inDegree[next] === 0) queue.push(next);
+        }
+    }
+
+    return completed === numCourses;
+};
