@@ -153,3 +153,73 @@ const canFinish = (numCourses, prerequisites) => {
 
     return completed === numCourses;
 };
+
+const canFinish2 = (numCourses, prerequisites) => {
+    const graph = new Array(numCourses).fill(0).map(() => []);
+    const remainingPrereqs = new Array(numCourses).fill(0);
+
+    for (let [course, prereq] of prerequisites) {
+        // This is because in DFS, we go to the end of the last prerequisite. Ex: course -> prereq -> prereq...
+        // In BFS, we start with prerequisite that has no remaining dependencies
+        // Then tries to see which course unlocks. so prereq -> course
+        graph[prereq].push(course);
+        remainingPrereqs[course]++;
+    }
+
+    const queue = [];
+
+    for (let course = 0; course < numCourses; course++) {
+        if (remainingPrereqs[course] === 0) queue.push(course);
+    }
+
+    let completedCourses = 0;
+
+    while (queue.length) {
+        const course = queue.shift();
+        completedCourses++;
+
+        for (let unlockedCourse of graph[course]) {
+            remainingPrereqs[unlockedCourse]--;
+            if (remainingPrereqs[unlockedCourse] === 0) queue.push(unlockedCourse);
+        }
+    }
+
+    return completedCourses === numCourses;
+}
+
+// [0 = [], 1 = [], 2 = []]
+
+// [0,1] [1, 2] [2,3]
+// {0: [1]
+//  1: [2]
+//. 2: [3]}
+
+const canFinishDFS = (numCourses, prerequisites) => {
+    const graph = new Array(numCourses).fill(0).map(() => []);
+    const state = new Array(numCourses).fill(0);
+
+    for (let [course, prereq] of prerequisites) {
+        graph[course].push(prereq);
+    }
+
+    const dfs = (course) => {
+        if (state[course] === 1) return false;
+        if (state[course] === 2) return true;
+
+        state[course] = 1;
+
+        for (let prereq of graph[course]) {
+            if (!dfs(prereq)) return false;
+        }
+
+        state[course] = 2;
+
+        return true;
+    };
+
+    for (let course = 0; course < numCourses; course++) {
+        if (!dfs(course)) return false;
+    }
+
+    return true;
+}
